@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Hello World!"/>
+        android:text="百度TTS和ASR集成"/>
 
     <Button
         android:id="@+id/tts"
@@ -28,4 +28,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="ASR"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="说话内容为:"/>
+    <TextView
+        android:id="@+id/asr_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

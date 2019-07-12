@@ -2,7 +2,6 @@ package com.baidu.tts.sample;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,22 +22,7 @@ import java.util.Map;
 
 public class BaiduTts implements MainHandlerConstant {
 
-    private HandlerThread workthread;
-
     private BaiduTts() {
-        workthread = new HandlerThread("BaiduTts");
-        workthread.start();
-        mainHandler = new Handler() {
-            /*
-             * @param msg
-             */
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                handle(msg);
-            }
-
-        };
     }
 
     private static class SingletonInner {
@@ -100,6 +84,17 @@ public class BaiduTts implements MainHandlerConstant {
      */
     public void initialTts() {
         Log.i(TAG, "initialTts");
+        mainHandler = new Handler(mContext.getMainLooper()) {
+            /*
+             * @param msg
+             */
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                handle(msg);
+            }
+
+        };
         LoggerProxy.printable(true); // 日志打印在logcat中
         // 设置初始化参数
         // 此处可以改为 含有您业务逻辑的SpeechSynthesizerListener的实现类

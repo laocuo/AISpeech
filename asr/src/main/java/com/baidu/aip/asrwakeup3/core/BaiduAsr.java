@@ -2,7 +2,6 @@ package com.baidu.aip.asrwakeup3.core;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
@@ -21,29 +20,27 @@ import java.util.Map;
 
 public class BaiduAsr implements IStatus {
 
-    private HandlerThread workthread;
+    public interface BaiduAsrInterface {
+        void onWakeUp();
+        void onSpeechTake(String voice);
+    }
 
     private BaiduAsr() {
-        workthread = new HandlerThread("BaiduAsr");
-        workthread.start();
-        mainHandler = new Handler(workthread.getLooper()) {
-            /*
-             * @param msg
-             */
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                handle(msg);
-            }
-
-        };
     }
 
     private void handle(Message msg) {
         switch (msg.what) {
             case STATUS_WAKEUP_SUCCESS:
                 startRecog();
+                if (mBaiduAsrInterface != null) {
+                    mBaiduAsrInterface.onWakeUp();
+                }
                 break;
+            case STATUS_FINISHED:
+                String voice = (String) msg.obj;
+                if (mBaiduAsrInterface != null) {
+                    mBaiduAsrInterface.onSpeechTake(voice);
+                }
             default:
                 int status = msg.what;
                 String message = (String) msg.obj;
@@ -64,10 +61,17 @@ public class BaiduAsr implements IStatus {
 
     private Handler mainHandler;
 
+    private BaiduAsrInterface mBaiduAsrInterface;
+
     private static final String TAG = "BaiduAsr";
 
     public BaiduAsr setContext(Context context) {
         mContext = context;
+        return this;
+    }
+
+    public BaiduAsr setBaiduAsrInterface(BaiduAsrInterface baiduAsrInterface) {
+        mBaiduAsrInterface = baiduAsrInterface;
         return this;
     }
 
@@ -150,6 +154,17 @@ public class BaiduAsr implements IStatus {
     }
 
     public void initAsr() {
+        mainHandler = new Handler(mContext.getMainLooper()) {
+            /*
+             * @param msg
+             */
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                handle(msg);
+            }
+
+        };
         initRecog();
         initWakeUp();
     }

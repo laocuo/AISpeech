@@ -8,15 +8,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.baidu.aip.asrwakeup3.core.BaiduAsr;
 import com.baidu.tts.sample.BaiduTts;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, BaiduAsr.BaiduAsrInterface {
 
     private Button mTTS, mASR;
+
+    private TextView mContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         mTTS = findViewById(R.id.tts);
         mASR = findViewById(R.id.asr);
+        mContent = findViewById(R.id.asr_content);
         mTTS.setOnClickListener(this);
         mASR.setOnClickListener(this);
         initPermission();
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         } else {
             BaiduTts.getInstance().setContext(this).initialTts();
-            BaiduAsr.getInstance().setContext(this).initAsr();
+            BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initAsr();
         }
     }
 
@@ -105,6 +109,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // 此处为android 6.0以上动态授权的回调，用户自行实现。
         BaiduTts.getInstance().setContext(this).initialTts();
-        BaiduAsr.getInstance().setContext(this).initAsr();
+        BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initAsr();
+    }
+
+    @Override
+    public void onWakeUp() {
+        mContent.setText("onWakeUp");
+    }
+
+    @Override
+    public void onSpeechTake(String voice) {
+        mContent.setText(voice);
     }
 }
