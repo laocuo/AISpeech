@@ -21,4 +21,6 @@ public interface IStatus {
 
     int STATUS_WAKEUP_SUCCESS = 7001;
     int STATUS_WAKEUP_EXIT = 7003;
+
+    int MSG_SPEECH_CONTENT = 666;
 }

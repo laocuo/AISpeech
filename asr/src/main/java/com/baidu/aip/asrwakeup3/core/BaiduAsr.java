@@ -36,11 +36,12 @@ public class BaiduAsr implements IStatus {
                     mBaiduAsrInterface.onWakeUp();
                 }
                 break;
-            case STATUS_FINISHED:
+            case MSG_SPEECH_CONTENT:
                 String voice = (String) msg.obj;
                 if (mBaiduAsrInterface != null) {
                     mBaiduAsrInterface.onSpeechTake(voice);
                 }
+                break;
             default:
                 int status = msg.what;
                 String message = (String) msg.obj;
@@ -77,7 +78,20 @@ public class BaiduAsr implements IStatus {
 
     private MyWakeup myWakeup;
 
-    private void initWakeUp() {
+    public void initWakeUp() {
+        if (mainHandler == null) {
+            mainHandler = new Handler(mContext.getMainLooper()) {
+                /*
+                 * @param msg
+                 */
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    handle(msg);
+                }
+
+            };
+        }
         // 基于DEMO唤醒词集成第1.1, 1.2, 1.3步骤
         IWakeupListener listener = new RecogWakeupListener(mainHandler);
         myWakeup = new MyWakeup(mContext, listener);
@@ -85,7 +99,7 @@ public class BaiduAsr implements IStatus {
 
     // 点击“开始识别”按钮
     // 基于DEMO唤醒词集成第2.1, 2.2 发送开始事件开始唤醒
-    private void startWakeUp() {
+    public void startWakeUp() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(SpeechConstant.WP_WORDS_FILE, "assets:///WakeUp.bin");
         // "assets:///WakeUp.bin" 表示WakeUp.bin文件定义在assets目录下
@@ -97,11 +111,11 @@ public class BaiduAsr implements IStatus {
     }
 
     // 基于DEMO唤醒词集成第4.1 发送停止事件
-    private void stopWakeUp() {
+    public void stopWakeUp() {
         myWakeup.stop();
     }
 
-    private void releaseWakeUp() {
+    public void releaseWakeUp() {
         // 基于DEMO唤醒词集成第5 退出事件管理器
         myWakeup.release();
     }
@@ -123,13 +137,28 @@ public class BaiduAsr implements IStatus {
      */
     private int backTrackInMs = 1500;
 
-    private void initRecog() {
+    public void initRecog() {
+        if (mainHandler == null) {
+            mainHandler = new Handler(mContext.getMainLooper()) {
+                /*
+                 * @param msg
+                 */
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    handle(msg);
+                }
+
+            };
+        }
+        Log.d(TAG, "initRecog");
         IRecogListener recogListener = new MessageStatusRecogListener(mainHandler);
         // 改为 SimpleWakeupListener 后，不依赖handler，但将不会在UI界面上显示
         myRecognizer = new MyRecognizer(mContext, recogListener);
     }
 
-    private void startRecog() {
+    public void startRecog() {
+        Log.d(TAG, "startRecog");
         // 此处 开始正常识别流程
         Map<String, Object> params = new LinkedHashMap<String, Object>();
         params.put(SpeechConstant.ACCEPT_AUDIO_VOLUME, false);
@@ -145,11 +174,13 @@ public class BaiduAsr implements IStatus {
         myRecognizer.start(params);
     }
 
-    private void stopRecog() {
+    public void stopRecog() {
+        Log.d(TAG, "stopRecog");
         myRecognizer.stop();
     }
 
-    private void releaseRecog() {
+    public void releaseRecog() {
+        Log.d(TAG, "releaseRecog");
         myRecognizer.release();
     }
 

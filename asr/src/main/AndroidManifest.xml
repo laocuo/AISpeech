@@ -14,5 +14,6 @@
         <meta-data
                 android:name="com.baidu.speech.SECRET_KEY"
                 android:value="y7S7hAI894BB3LF1yHYmvQEus1B6wPvj"/>
+        <service android:name="com.baidu.speech.VoiceRecognitionService" android:exported="false" />
     </application>
 </manifest>

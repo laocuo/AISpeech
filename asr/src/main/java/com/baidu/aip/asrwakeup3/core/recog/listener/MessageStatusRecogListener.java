@@ -17,7 +17,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
 
     private boolean needTime = true;
 
-    private static final String TAG = "MesStatusRecogListener";
+    private static final String TAG = "MessageStatusRecogListener";
 
     public MessageStatusRecogListener(Handler handler) {
         this.handler = handler;
@@ -65,6 +65,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
         }
         speechEndTime = 0;
         sendMessage(message, status, true);
+        sendSpeechContent(results[0]);
     }
 
     @Override
@@ -145,7 +146,6 @@ public class MessageStatusRecogListener extends StatusRecogListener {
 
     private void sendMessage(String message, int what, boolean highlight) {
 
-
         if (needTime && what != STATUS_FINISHED) {
             message += "  ;time=" + System.currentTimeMillis();
         }
@@ -160,6 +160,14 @@ public class MessageStatusRecogListener extends StatusRecogListener {
             msg.arg2 = 1;
         }
         msg.obj = message + "\n";
+        handler.sendMessage(msg);
+    }
+
+    private void sendSpeechContent(String result) {
+        Message msg = Message.obtain();
+        msg.what = MSG_SPEECH_CONTENT;
+        msg.arg1 = status;
+        msg.obj = result + "\n";
         handler.sendMessage(msg);
     }
 }

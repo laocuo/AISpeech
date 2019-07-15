@@ -37,14 +37,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         BaiduTts.getInstance().stop();
-        BaiduAsr.getInstance().stop();
+        BaiduAsr.getInstance().stopRecog();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         BaiduTts.getInstance().release();
-        BaiduAsr.getInstance().release();
+        BaiduAsr.getInstance().releaseRecog();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }.start();
                 break;
             case R.id.asr:
-                BaiduAsr.getInstance().start();
+                BaiduAsr.getInstance().startRecog();
                 break;
             default:
                 break;
@@ -85,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_WIFI_STATE,
-                Manifest.permission.CHANGE_WIFI_STATE
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.RECORD_AUDIO
         };
 
         ArrayList<String> toApplyList = new ArrayList<String>();
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         } else {
             BaiduTts.getInstance().setContext(this).initialTts();
-            BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initAsr();
+            BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initRecog();
         }
     }
 
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // 此处为android 6.0以上动态授权的回调，用户自行实现。
         BaiduTts.getInstance().setContext(this).initialTts();
-        BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initAsr();
+        BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initRecog();
     }
 
     @Override
