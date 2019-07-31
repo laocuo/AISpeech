@@ -1,6 +1,8 @@
 package com.baidu.tts.sample;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -38,11 +40,11 @@ public class BaiduTts implements MainHandlerConstant {
      * 发布时请替换成自己申请的appId appKey 和 secretKey。注意如果需要离线合成功能,请在您申请的应用中填写包名。
      * 本demo的包名是com.baidu.tts.sample，定义在build.gradle中。
      */
-    protected String appId = "11005757";
+    protected String appId = "";
 
-    protected String appKey = "Ovcz19MGzIKoDDb3IsFFncG1";
+    protected String appKey = "";
 
-    protected String secretKey = "e72ebb6d43387fc7f85205ca7e6706e2";
+    protected String secretKey = "";
 
     // TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
     protected TtsMode ttsMode = TtsMode.MIX;
@@ -101,6 +103,10 @@ public class BaiduTts implements MainHandlerConstant {
         SpeechSynthesizerListener listener = new UiMessageListener(mainHandler);
 
         Map<String, String> params = getParams();
+
+        appId = getMetaDataFromApp("com.baidu.tts.APP_ID");
+        appKey = getMetaDataFromApp("com.baidu.tts.API_KEY");
+        secretKey = getMetaDataFromApp("com.baidu.tts.SECRET_KEY");
 
         // appId appKey secretKey 网站上您申请的应用获取。注意使用离线合成功能的话，需要应用中填写您app的包名。包名在build.gradle中获取。
         InitConfig initConfig = new InitConfig(appId, appKey, secretKey, ttsMode, params, listener);
@@ -237,5 +243,18 @@ public class BaiduTts implements MainHandlerConstant {
             default:
                 break;
         }
+    }
+
+    //获取value
+    private String getMetaDataFromApp(String key) {
+        String value = "";
+        try {
+            ApplicationInfo appInfo = mContext.getPackageManager().getApplicationInfo(mContext.getPackageName(),
+                    PackageManager.GET_META_DATA);
+            value = appInfo.metaData.getString(key);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 }

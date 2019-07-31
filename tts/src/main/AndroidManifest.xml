@@ -13,4 +13,16 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <application>
+        <meta-data
+            android:name="com.baidu.tts.APP_ID"
+            android:value="11005757"/>
+        <meta-data
+            android:name="com.baidu.tts.API_KEY"
+            android:value="Ovcz19MGzIKoDDb3IsFFncG1"/>
+        <meta-data
+            android:name="com.baidu.tts.SECRET_KEY"
+            android:value="e72ebb6d43387fc7f85205ca7e6706e2"/>
+    </application>
 </manifest>
