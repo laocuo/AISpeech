@@ -10,12 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.baidu.aip.asrwakeup3.core.BaiduAsr;
-import com.baidu.tts.sample.BaiduTts;
+import com.baidu.speech.SpeechHelper;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, BaiduAsr.BaiduAsrInterface {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button mTTS, mASR;
 
@@ -36,38 +35,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
-        BaiduTts.getInstance().stop();
-        BaiduAsr.getInstance().stopRecog();
+        SpeechHelper.getInstance().stopTts();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BaiduTts.getInstance().release();
-        BaiduAsr.getInstance().releaseRecog();
+        SpeechHelper.getInstance().release();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tts:
-                BaiduTts.getInstance().loadOnlineMode("0");
-                BaiduTts.getInstance().speak("离开家第三方老会计");
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                            BaiduTts.getInstance().loadOnlineMode("1");
-                            BaiduTts.getInstance().speak("死垃圾可破解");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
+                SpeechHelper.getInstance().speak("百度语音测试");
                 break;
             case R.id.asr:
-                BaiduAsr.getInstance().startRecog();
+                SpeechHelper.getInstance().startWakeUp();
                 break;
             default:
                 break;
@@ -101,25 +85,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         } else {
-            BaiduTts.getInstance().setContext(this).initialTts();
-            BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initRecog();
+            initSpeech();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // 此处为android 6.0以上动态授权的回调，用户自行实现。
-        BaiduTts.getInstance().setContext(this).initialTts();
-        BaiduAsr.getInstance().setContext(this).setBaiduAsrInterface(this).initRecog();
+        initSpeech();
     }
 
-    @Override
-    public void onWakeUp() {
-        mContent.setText("onWakeUp");
-    }
-
-    @Override
-    public void onSpeechTake(String voice) {
-        mContent.setText(voice);
+    private void initSpeech() {
+        SpeechHelper.getInstance().setContext(MainActivity.this).init();
     }
 }

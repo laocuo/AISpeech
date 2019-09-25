@@ -1,1 +1,1 @@
-include ':app', ':tts', ':asr'
+include ':app', ':speech'
