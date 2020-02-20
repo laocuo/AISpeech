@@ -18,7 +18,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
 
     private boolean needTime = true;
 
-    private static final String TAG = "MessageStatusRecogListener";
+    private static final String TAG = "RecogListener";
 
     public MessageStatusRecogListener(Handler handler) {
         this.handler = handler;

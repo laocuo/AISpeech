@@ -32,8 +32,6 @@ public class BaiduAsr implements IStatus {
                     mListener.onWakeUp();
                 }
                 break;
-            case STATUS_FINISHED:
-                break;
             case MSG_RECOG_FINISH:
                 String voice = (String) msg.obj;
                 if (mListener != null) {
@@ -172,6 +170,9 @@ public class BaiduAsr implements IStatus {
         params.put(SpeechConstant.ACCEPT_AUDIO_VOLUME, false);
         params.put(SpeechConstant.VAD, SpeechConstant.VAD_DNN);
         params.put(SpeechConstant.VAD_ENDPOINT_TIMEOUT, 4000);
+        params.put(SpeechConstant.ASR_OFFLINE_ENGINE_GRAMMER_FILE_PATH, "assets:///baidu_speech_grammar.bsg");
+        params.put(SpeechConstant.NLU, "enable");
+        params.put(SpeechConstant.DECODER, 2);
         // 如识别短句，不需要需要逗号，使用1536搜索模型。其它PID参数请看文档
         params.put(SpeechConstant.PID, 1536);
         if (backTrackInMs > 0) {

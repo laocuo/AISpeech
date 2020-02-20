@@ -2,6 +2,8 @@ package com.laocuo.speech;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -11,10 +13,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.baidu.speech.SpeechHelper;
+import com.baidu.speech.SpeechListener;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SpeechListener {
 
     private Button mTTS, mASR;
 
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTTS.setOnClickListener(this);
         mASR.setOnClickListener(this);
         initPermission();
+        SpeechHelper.getInstance().setSpeechListener(this);
     }
 
     @Override
@@ -97,5 +101,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initSpeech() {
         SpeechHelper.getInstance().setContext(MainActivity.this).init();
+    }
+
+    @Override
+    public void recogFinish(final String result) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mContent.setText(result);
+            }
+        });
     }
 }

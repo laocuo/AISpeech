@@ -29,6 +29,8 @@ public class SpeechHelper implements ITTSListener, IASRListener {
 
     private boolean isSpeaking;
 
+    private SpeechListener mSpeechListener;
+
     public SpeechHelper setContext(Context context) {
         BaiduAsr.getInstance().setContext(context);
         BaiduTts.getInstance().setContext(context);
@@ -40,6 +42,10 @@ public class SpeechHelper implements ITTSListener, IASRListener {
         BaiduAsr.getInstance().setListener(this).initAsr();
         BaiduTts.getInstance().setListener(this).initTts();
         AndroidTts.getInstance().initTts(this);
+    }
+
+    public void setSpeechListener(SpeechListener speechListener) {
+        mSpeechListener = speechListener;
     }
 
     public boolean speak(String text) {
@@ -106,6 +112,9 @@ public class SpeechHelper implements ITTSListener, IASRListener {
     @Override
     public void onRecogFinish(String voice) {
         Log.i(TAG, "onRecogFinish " + voice);
+        if (mSpeechListener != null) {
+            mSpeechListener.recogFinish(voice);
+        }
         speak("收到", "asr");
     }
 
