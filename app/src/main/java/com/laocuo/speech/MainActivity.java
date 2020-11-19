@@ -23,6 +23,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextView mContent;
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                SpeechHelper.getInstance().speak("百度语音测试");
+//                mHandler.sendEmptyMessageDelayed(1, 5000);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mContent = findViewById(R.id.asr_content);
         mTTS.setOnClickListener(this);
         mASR.setOnClickListener(this);
+        mASR.setEnabled(false);
         initPermission();
         SpeechHelper.getInstance().setSpeechListener(this);
     }
@@ -40,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         SpeechHelper.getInstance().stopTts();
+        mHandler.removeMessages(1);
     }
 
     @Override
@@ -52,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tts:
-                SpeechHelper.getInstance().speak("百度语音测试");
+                mHandler.sendEmptyMessage(1);
                 break;
             case R.id.asr:
                 SpeechHelper.getInstance().startWakeUp();

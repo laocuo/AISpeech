@@ -10,6 +10,7 @@ import android.util.Log;
 import com.baidu.speech.tts.ITTSListener;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * android原生API
@@ -33,19 +34,21 @@ public class AndroidTts {
     private UtteranceProgressListener mListener = new UtteranceProgressListener() {
         @Override
         public void onStart(String utteranceId) {
+            Log.i(TAG, "xunfei onStart:" + utteranceId);
             sendMessage(utteranceId, "播放开始", false, ActionCode.WHAT_TTS_START_CODE);
             mITTSListener.onPlayStart(utteranceId);
         }
 
         @Override
         public void onDone(String utteranceId) {
+            Log.i(TAG, "xunfei onDone:" + utteranceId);
             sendMessage(utteranceId, "播放结束", false, ActionCode.WHAT_TTS_FINISH_CODE);
             mITTSListener.onPlayDone(utteranceId);
         }
 
         @Override
         public void onError(String utteranceId) {
-            Log.i(TAG, "onError " + utteranceId);
+            Log.i(TAG, "xunfei onError " + utteranceId);
         }
     };
 
@@ -64,14 +67,20 @@ public class AndroidTts {
 
     public void initTts(ITTSListener listener) {
         mITTSListener = listener;
+        Log.i(TAG, "xunfei initTts");
         mSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
+                Log.i(TAG, "xunfei onInit status=" + status);
                 if (status == TextToSpeech.SUCCESS) {
-                    mSpeech.setSpeechRate(1.0f);
-                    mSpeech.setPitch(1.0f);
-                    mSpeech.setOnUtteranceProgressListener(mListener);
-                    inited = true;
+                    int result = mSpeech.setLanguage(Locale.CHINA);
+                    Log.i(TAG, "xunfei onInit result=" + result);
+                    if (result == TextToSpeech.LANG_AVAILABLE) {
+                        mSpeech.setSpeechRate(1.0f);
+                        mSpeech.setPitch(1.0f);
+                        mSpeech.setOnUtteranceProgressListener(mListener);
+                        inited = true;
+                    }
                 }
             }
         });
@@ -96,9 +105,11 @@ public class AndroidTts {
 
     public boolean speak(String text, String utteranceId) {
         if (inited) {
+            Log.i(TAG, "xunfei speak:" + text);
             HashMap<String, String> params = new HashMap<>();
             params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId);
             int result = mSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, params);
+            Log.i(TAG, "xunfei speak result:" + result);
             if (result == TextToSpeech.SUCCESS) {
                 return true;
             }

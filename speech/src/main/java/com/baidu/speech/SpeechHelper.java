@@ -53,8 +53,8 @@ public class SpeechHelper implements ITTSListener, IASRListener {
     }
 
     public boolean speak(String text, String utteranceId) {
-        return BaiduTts.getInstance().speak(text, utteranceId);
-//        return AndroidTts.getInstance().speak(text, utteranceId);
+//        return BaiduTts.getInstance().speak(text, utteranceId);
+        return AndroidTts.getInstance().speak(text, utteranceId);
     }
 
     public void stopTts() {
